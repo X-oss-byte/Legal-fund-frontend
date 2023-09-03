@@ -1,6 +1,5 @@
-import type { V2_MetaFunction } from "@remix-run/node";
+import type { V2_MetaFunction } from "@vercel/remix";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import proofs from "~/lib/proofs.json";
 import {
   useAccount,
   useContractWrite,
@@ -11,6 +10,8 @@ import {
 import { formatEther } from "viem";
 import { useHydrated } from "~/hooks/useHydrated";
 import { refundABI } from "~/lib/refundABI";
+import { useFetcher } from "@remix-run/react";
+import { useEffect } from "react";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -22,15 +23,19 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-interface IProofs {
-  [address: string]: { proof: Array<string>; amount: string };
-}
-
 export default function Index() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
 
-  const refundProofs: any = address ? (proofs as IProofs)[address] ?? {} : {};
+  const userDetails = useFetcher();
+
+  useEffect(() => {
+    if (address && userDetails.state === "idle" && !userDetails.data) {
+      userDetails.load(`/user-refund/${address}`);
+    }
+  }, [address, userDetails]);
+
+  const refundProofs: any = userDetails.data ?? {};
 
   const hydrated = useHydrated();
 
