@@ -51,7 +51,7 @@ export default function Index() {
     data: txStatus,
   } = useWaitForTransaction({
     hash: data?.hash,
-    enabled: data ? true : false,
+    enabled: data && chain && chain.testnet ? true : false,
   });
 
   return (

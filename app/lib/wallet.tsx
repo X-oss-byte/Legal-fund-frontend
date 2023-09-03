@@ -14,15 +14,24 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { type ReactNode } from "react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { polygonMumbai } from "wagmi/chains";
+import { arbitrum, bsc, mainnet, polygon, polygonMumbai } from "wagmi/chains";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 
 const { chains, publicClient } = configureChains(
-  [polygonMumbai],
+  [mainnet, arbitrum, polygon, bsc, polygonMumbai],
   [
     jsonRpcProvider({
-      rpc: () => ({
-        http: "https://rpc.ankr.com/polygon_mumbai",
+      rpc: (chain) => ({
+        http:
+          chain.id === mainnet.id
+            ? "https://eth.llamarpc.com"
+            : chain.id === bsc.id
+            ? "https://bsc-dataseed.binance.org"
+            : chain.id === arbitrum.id
+            ? "https://rpc.ankr.com/arbitrum"
+            : chain.id === polygon.id
+            ? "https://polygon.llamarpc.com	"
+            : "https://rpc.ankr.com/polygon_mumbai",
       }),
     }),
   ]
