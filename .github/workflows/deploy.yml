@@ -15,6 +15,7 @@ jobs:
           npm i
           npm run build
           npm start &
+          sleep 10s
           wget -r -nH http://localhost:3000/ -P static
 
       - name: Deploy 🚀
